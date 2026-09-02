@@ -22,9 +22,29 @@ const products = productsFromServer.map(product => {
 
 export const App = () => {
   const [selectedUserId, setSelectedUserId] = useState(null);
-  const visibleProducts = products.filter(product => {
-    return selectedUserId === null || product.user.id === selectedUserId;
-  });
+  const [query, setQuery] = useState('');
+
+  const getVisibleProducts = (allProducts, UserId, searchQuery) => {
+    let resultProducts = allProducts;
+
+    if (UserId !== null) {
+      resultProducts = resultProducts.filter(product => {
+        return product.user.id === UserId;
+      });
+    }
+
+    if (searchQuery) {
+      const normalizedQuery = searchQuery.toLowerCase().trim();
+
+      resultProducts = resultProducts.filter(product =>
+        product.name.toLowerCase().includes(normalizedQuery),
+      );
+    }
+
+    return resultProducts;
+  };
+
+  const visibleProducts = getVisibleProducts(products, selectedUserId, query);
 
   return (
     <div className="section">
@@ -64,7 +84,8 @@ export const App = () => {
                   type="text"
                   className="input"
                   placeholder="Search"
-                  value="qwe"
+                  value={query}
+                  onChange={event => setQuery(event.target.value)}
                 />
 
                 <span className="icon is-left">
@@ -73,11 +94,14 @@ export const App = () => {
 
                 <span className="icon is-right">
                   {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                  <button
-                    data-cy="ClearButton"
-                    type="button"
-                    className="delete"
-                  />
+                  {query && (
+                    <button
+                      data-cy="ClearButton"
+                      type="button"
+                      className="delete"
+                      onClick={() => setQuery('')}
+                    />
+                  )}
                 </span>
               </p>
             </div>
