@@ -36,9 +36,9 @@ export const App = () => {
     if (searchQuery) {
       const normalizedQuery = searchQuery.toLowerCase().trim();
 
-      resultProducts = resultProducts.filter(product =>
-        product.name.toLowerCase().includes(normalizedQuery),
-      );
+      resultProducts = resultProducts.filter(product => {
+        return product.name.toLowerCase().includes(normalizedQuery);
+      });
     }
 
     return resultProducts;
@@ -144,6 +144,10 @@ export const App = () => {
                 data-cy="ResetAllButton"
                 href="#/"
                 className="button is-link is-outlined is-fullwidth"
+                onClick={() => {
+                  setSelectedUserId(null);
+                  setQuery('');
+                }}
               >
                 Reset all filters
               </a>
